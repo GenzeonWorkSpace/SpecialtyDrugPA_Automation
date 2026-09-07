@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Specialty Drug PA Automation &mdash; Fusion Hub Services</title>
+<style>
+/* Fusion Hub Services — theme & layout */
+
+:root{
+  --navy:#0f2a3e; --navy-2:#153a54; --teal:#0f8a8a; --teal-2:#0b6e6e;
+  --bg:#f4f7f9; --card:#ffffff; --border:#dde5ea;
+  --text:#1c2b33; --muted:#5c7280; --muted-2:#8ea0ac;
+  --green:#1c8a5a; --green-bg:#e7f6ee;
+  --amber:#a56a00; --amber-bg:#fdf3dd;
+  --red:#b23b3b; --red-bg:#fbe9e9;
+  --blue:#265d8a; --blue-bg:#e9f1fa;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 2px rgba(15,42,62,.06), 0 1px 8px rgba(15,42,62,.05);
+  --focus:#0f8a8a;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--text); font-size:14px; line-height:1.5;
+}
+a{color:var(--teal-2)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+
+/* ---------- Topbar ---------- */
+.topbar{
+  background:var(--navy); color:#fff; padding:0 24px; height:56px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.2px}
+.brand .mark{
+  width:26px; height:26px; border-radius:7px; background:var(--teal);
+  display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff;
+}
+.brand .sub{font-weight:400; color:#9fb4c2; font-size:12px; margin-left:6px}
+.nav-tabs{display:flex; gap:4px}
+.nav-tabs a{
+  color:#cfe0e8; text-decoration:none; padding:8px 12px; border-radius:7px; font-size:13px;
+}
+.nav-tabs a.active, .nav-tabs a:hover{background:rgba(255,255,255,.1); color:#fff}
+.env-tag{
+  font-size:11px; color:#9fb4c2; border:1px solid rgba(255,255,255,.2); padding:3px 8px; border-radius:20px;
+}
+
+/* ---------- Layout ---------- */
+.container{max-width:1180px; margin:0 auto; padding:24px}
+.page-title{font-size:20px; font-weight:700; margin:0 0 4px}
+.page-sub{color:var(--muted); font-size:13px; margin:0 0 20px}
+
+/* ---------- Cards / panels ---------- */
+.panel{
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:var(--shadow); margin-bottom:16px;
+}
+.panel-head{
+  padding:14px 18px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.panel-head h2{font-size:14px; margin:0; font-weight:700}
+.panel-body{padding:18px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+  border-radius:var(--radius-sm); font-size:13px; font-weight:600; padding:8px 14px;
+  border:1px solid var(--border); background:#fff; color:var(--text);
+  transition:background .12s ease, border-color .12s ease;
+}
+.btn:hover{background:#f2f6f8}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+.btn-primary{background:var(--teal); border-color:var(--teal); color:#fff}
+.btn-primary:hover{background:var(--teal-2)}
+.btn-ghost{background:transparent; border-color:transparent}
+.btn-ghost:hover{background:#eef2f4}
+.btn-sm{padding:5px 10px; font-size:12px}
+.btn-danger-outline{color:var(--red); border-color:#eecece}
+.btn-export{
+  background:var(--navy-2); border-color:var(--navy-2); color:#fff;
+}
+.btn-export:hover{background:var(--navy)}
+.btn-export.is-loading{opacity:.7; cursor:progress}
+.btn-export.is-done{background:var(--green); border-color:var(--green)}
+
+/* ---------- Badges / pills ---------- */
+.badge{
+  display:inline-flex; align-items:center; font-size:9px; font-weight:800;
+  padding:2px 7px; border-radius:4px; text-transform:uppercase; letter-spacing:.5px;
+  vertical-align:middle; margin-left:5px;
+}
+.badge-happy {background:var(--green-bg); color:var(--green)}
+.badge-stp   {background:var(--blue-bg);  color:var(--blue)}
+.badge-update{background:var(--amber-bg); color:var(--amber)}
+.badge-reject{background:var(--red-bg);   color:var(--red)}
+.badge-neutral{background:#eef2f4; color:var(--muted)}
+
+.pill{font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600}
+.pill-low{background:var(--amber-bg); color:var(--amber)}
+.pill-flag{background:var(--red-bg); color:var(--red)}
+.pill-ok{background:var(--green-bg); color:var(--green)}
+
+/* ---------- Work queue table ---------- */
+table{width:100%; border-collapse:collapse}
+.queue-table th{
+  text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--muted-2); padding:10px 14px; border-bottom:1px solid var(--border); white-space:nowrap;
+}
+.queue-table td{ padding:14px 14px; border-bottom:1px solid var(--border); vertical-align:middle }
+.queue-table tr:last-child td{border-bottom:none}
+.queue-row:hover td{background:#f7fafc}
+
+/* Case column */
+.td-case{ min-width:130px }
+.case-id{
+  font-weight:800; font-size:13px; color:var(--teal-2); text-decoration:none; letter-spacing:.2px;
+}
+.case-id:hover{text-decoration:underline}
+
+/* Patient column */
+.td-patient{ min-width:160px }
+.td-main{ font-size:13px; font-weight:600; color:var(--text); margin-bottom:2px }
+.td-sub{ font-size:11px; color:var(--muted); margin-top:2px }
+
+/* Therapy column */
+.td-therapy{ min-width:260px }
+.td-therapy .td-main{ font-weight:600 }
+
+/* Received */
+.td-recv{ white-space:nowrap; font-size:12px; color:var(--muted); min-width:110px }
+
+/* Docs count */
+.td-docs{ text-align:center }
+.doc-count{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:50%; background:#eef2f4;
+  font-size:11px; font-weight:700; color:var(--muted);
+}
+
+/* Status */
+.td-status{ white-space:nowrap; min-width:90px }
+.status-btn{
+  display:inline-block; font-size:10px; font-weight:800; padding:4px 10px;
+  border-radius:5px; letter-spacing:.4px; text-transform:uppercase; border:1px solid;
+}
+.status-new    { background:#f0f4f8; border-color:#d0dce8; color:var(--muted) }
+.status-running{ background:var(--blue-bg); border-color:#bdd4e8; color:var(--blue) }
+.status-review { background:var(--amber-bg); border-color:#e8d090; color:var(--amber) }
+.status-done   { background:var(--green-bg); border-color:#bce0cc; color:var(--green) }
+.open-arrow{
+  margin-left:8px; font-size:11px; color:var(--teal-2); font-weight:700; text-decoration:none;
+}
+.open-arrow:hover{text-decoration:underline}
+
+/* Actions */
+.td-actions{ white-space:nowrap }
+.row-actions{display:flex; gap:6px; justify-content:flex-end; align-items:center}
+
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+/* ---------- Case workspace ---------- */
+.breadcrumb{
+  display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  color:var(--muted); text-decoration:none; margin-bottom:10px;
+}
+.breadcrumb:hover{color:var(--teal-2)}
+.case-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px}
+.case-header h1{font-size:20px; margin:0 0 6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.case-meta{color:var(--muted); font-size:13px}
+.case-subactions{display:flex; gap:14px; margin-top:8px}
+.case-actions{display:flex; gap:8px; flex-wrap:wrap}
+.btn-link{
+  background:none; border:none; padding:0; font-size:12px; color:var(--teal-2); font-weight:600;
+  cursor:pointer; text-decoration:underline; text-underline-offset:2px;
+}
+.btn-link.danger{color:var(--red)}
+.btn-link:hover{opacity:.75}
+.badge-neutral{background:#eef2f4; color:var(--muted)}
+
+.case-grid{display:grid; grid-template-columns:340px 1fr; gap:16px; align-items:start}
+@media (max-width:900px){ .case-grid{grid-template-columns:1fr} }
+
+.eyebrow{
+  font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  color:var(--muted-2); margin-bottom:6px;
+}
+.doc-icon-policy{background:var(--blue-bg); color:var(--blue); font-size:9px}
+
+/* ---------------- Hero (pre-run) card ---------------- */
+.hero{text-align:center; padding:40px 28px}
+.hero-icon{
+  width:48px; height:48px; border-radius:50%; background:#fff4e9; color:#c97a1f;
+  display:flex; align-items:center; justify-content:center; font-size:20px; margin:0 auto 16px;
+}
+.hero h2{margin:0 0 12px; font-size:19px}
+.hero p{max-width:520px; margin:0 auto 20px; color:var(--muted); font-size:13px; line-height:1.6}
+.hero p a{color:var(--teal-2); font-weight:600}
+.hero-baseline{margin-top:14px; font-size:11px; color:var(--muted-2); font-family:monospace}
+
+.kv{display:grid; grid-template-columns:120px 1fr; gap:6px 12px; font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+
+/* ---------- Pipeline ---------- */
+.pipeline{display:flex; flex-direction:column; gap:0}
+.stage{
+  display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px dashed var(--border);
+}
+.stage:last-child{border-bottom:none}
+.stage-icon{
+  width:22px; height:22px; border-radius:50%; flex:none;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;
+  background:#eef2f4; color:var(--muted-2);
+}
+.stage.done .stage-icon{background:var(--green-bg); color:var(--green)}
+.stage.skipped .stage-icon{background:#eef2f4; color:var(--muted-2)}
+.stage.running .stage-icon{background:var(--blue-bg); color:var(--blue)}
+.stage-name{font-weight:600; font-size:13px}
+.stage-result{color:var(--muted); font-size:12px}
+.stage-meta{margin-left:auto; text-align:right; color:var(--muted-2); font-size:11px}
+.stage.skipped .stage-name, .stage.skipped .stage-result{color:var(--muted-2)}
+
+/* ---------- Payer form ---------- */
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px}
+@media (max-width:600px){ .form-grid{grid-template-columns:1fr} }
+.field{border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 10px; background:#fafcfd}
+.field label{display:block; font-size:11px; color:var(--muted); margin-bottom:3px}
+.field .val{font-size:13px; font-weight:600; min-height:16px}
+.field .val.typing::after{content:"\258b"; animation:blink 1s step-end infinite; color:var(--teal)}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- Q&A / citations ---------- */
+.qa{border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-bottom:10px}
+.qa .q{font-weight:600; font-size:13px; margin-bottom:6px}
+.qa .a{font-size:13px}
+.qa .a.missing{color:var(--amber); font-style:italic}
+.qa .meta{display:flex; gap:8px; align-items:center; margin-top:8px; font-size:11px; color:var(--muted)}
+.cite-tag{
+  background:#eef6f6; color:var(--teal-2); border-radius:5px; padding:1px 6px; font-weight:700; font-size:10px;
+}
+
+/* ---------- Documents ---------- */
+.doc-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border)}
+.doc-row:last-child{border-bottom:none}
+.doc-icon{width:30px; height:30px; border-radius:6px; background:#eef2f4; flex:none; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--muted)}
+.doc-info{flex:1; min-width:0}
+.doc-label{font-size:13px; font-weight:600}
+.doc-sub{font-size:11px; color:var(--muted)}
+.doc-actions{display:flex; gap:6px}
+
+/* ---------- Assessment ---------- */
+.assessment{border-radius:var(--radius); padding:16px 18px; margin-bottom:16px; border:1px solid var(--border)}
+.assessment.approve{background:var(--green-bg); border-color:#bfe4cf}
+.assessment.file{background:var(--blue-bg); border-color:#c6dcef}
+.assessment.update{background:var(--amber-bg); border-color:#f0dca6}
+.assessment.reject{background:var(--red-bg); border-color:#f0c7c7}
+.assessment h3{margin:0 0 6px; font-size:15px}
+.assessment p{margin:0; font-size:13px}
+
+/* ---------- Receipt ---------- */
+.receipt{text-align:center; padding:36px 20px}
+.receipt .check{width:52px; height:52px; border-radius:50%; background:var(--green-bg); color:var(--green); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:24px}
+.receipt h2{margin:0 0 6px}
+.receipt .tracking{font-family:monospace; font-size:15px; background:#f2f6f8; display:inline-block; padding:6px 14px; border-radius:6px; margin:10px 0}
+.receipt .stats{display:flex; gap:24px; justify-content:center; margin-top:18px}
+.receipt .stat b{display:block; font-size:18px}
+.receipt .stat span{font-size:11px; color:var(--muted)}
+
+/* ---------- CRM ---------- */
+.crm-layout{display:grid; grid-template-columns:220px 1fr; gap:16px}
+@media (max-width:800px){ .crm-layout{grid-template-columns:1fr} }
+.crm-side{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:10px}
+.crm-side a{display:block; padding:9px 10px; border-radius:7px; text-decoration:none; color:var(--text); font-size:13px; font-weight:600}
+.crm-side a.active, .crm-side a:hover{background:#eef6f6; color:var(--teal-2)}
+.crm-tabs{display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:14px}
+.crm-tabs button{background:none; border:none; padding:9px 14px; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent}
+.crm-tabs button.active{color:var(--navy); border-color:var(--teal)}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{
+  position:fixed; inset:0; background:rgba(15,42,62,.45); z-index:60;
+  align-items:flex-start; justify-content:center; padding:40px 16px; overflow:auto;
+}
+.modal{
+  background:var(--card); border-radius:var(--radius); width:100%; max-width:560px;
+  box-shadow:0 12px 40px rgba(0,0,0,.25);
+}
+.modal .panel-head{border-radius:var(--radius) var(--radius) 0 0}
+.field input, .field select{
+  width:100%; border:1px solid var(--border); border-radius:5px; padding:6px 8px;
+  font-size:13px; font-family:inherit; background:#fff; color:var(--text);
+}
+.field input:focus, .field select:focus{outline:2px solid var(--focus); outline-offset:1px}
+
+/* ---------- Toast ---------- */
+.toast-stack{position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:8px; z-index:50}
+.toast{
+  background:var(--navy); color:#fff; padding:11px 16px; border-radius:8px; font-size:13px;
+  box-shadow:0 6px 18px rgba(0,0,0,.18); min-width:220px;
+}
+.toast.error{background:var(--red)}
+.toast.success{background:var(--green)}
+
+/* ---------- Empty / misc ---------- */
+.section-title{font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); margin:18px 0 8px}
+.divider{height:1px; background:var(--border); margin:14px 0}
+.flex-between{display:flex; align-items:center; justify-content:space-between}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+/*
+ * Fill these in with your Supabase project's URL and anon (public) key.
+ * Find both under Project Settings -> API in the Supabase dashboard.
+ * Never put a service_role key here -- this file ships to the browser.
+ *
+ * Leave both blank to run the page in local-simulation mode: the
+ * "Export to RPA queue" button will still work, but only fakes success
+ * in the browser instead of calling your edge function.
+ */
+window.SUPABASE_CONFIG = {
+  url: "",       // e.g. "https://abcdEFGHijklMNOP.supabase.co"
+  anonKey: ""    // the "anon public" key, safe for client-side use
+};
+
+</script>
+<script>
+/*
+ * assets/data.js
+ * All content for the Specialty Drug PA Automation demo — Fusion Hub Services.
+ * Every value here is synthetic. Edit this file and the app follows;
+ * index.html / app.js / app.css do not need to change.
+ *
+ * This is also the exact shape mirrored into Supabase (see supabase/schema.sql).
+ * Field-for-field, a row in `hub_case` == one object in CASES below.
+ */
+
+window.CASES = {
+
+  /* ============================================================
+     HUB-2041 — HAPPY — Approve & submit
+     ============================================================ */
+  "HUB-2041": {
+    id: "HUB-2041",
+    scenario: "HAPPY",
+    received: "2026-09-04T13:12:00Z",
+    runtime: "16s",
+    baseline: "34 min manual",
+    flags: 0,
+    primaryAction: "Approve & submit",
+
+    patient: {
+      name: "Marcus Ellison", age: 54, dob: "1971-11-03", sex: "M",
+      pid: "HUB-P-2041", phone: "(614) 555-0142",
+      address: "482 Larkspur Lane, Columbus, OH 43215"
+    },
+    payer: {
+      name: "Anvara Health Plan", short: "Anvara", plan: "Anvara PPO Select",
+      memberId: "ANV-8827461", group: "GRP-40021",
+      effective: "2026-01-01", benefit: "Medical — Specialty Pharmacy"
+    },
+    therapy: {
+      brand: "Velunexa", generic: "velunekimab",
+      label: "IL-23 inhibitor, plaque psoriasis", cls: "Biologic — IL-23 Inhibitor",
+      jcode: "J3591", ndc: "70842-0119-01", dose: "150 mg", route: "Subcutaneous injection",
+      frequency: "Loading at wks 0/4, then every 12 weeks", quantity: "1 prefilled syringe",
+      daysSupply: "84", siteOfCare: "Home self-administration",
+      duration: "12 months, initial authorization", requestType: "Initial",
+      startDate: "2026-09-15", strength: "150 mg/mL"
+    },
+    dx: {
+      code: "L40.0", text: "Psoriasis vulgaris",
+      full: "Chronic plaque psoriasis, moderate-to-severe, BSA 18%",
+      severity: "Moderate-to-severe"
+    },
+    prescriber: {
+      name: "Dr. Renata Kwan, MD", npi: "1780293441", specialty: "Dermatology",
+      practice: "Meridian Dermatology Associates", phone: "(614) 555-0199",
+      fax: "(614) 555-0198", tin: "31-4009221"
+    },
+    policy: {
+      id: "MP-DERM-014", title: "Anvara Medical Policy — IL-23 Inhibitors for Plaque Psoriasis",
+      effective: "2026-03-01", rev: "Rev. 6"
+    },
+    form: {
+      name: "Anvara Specialty Drug Prior Authorization Request",
+      id: "ANV-PA-014", rev: "Rev. 2026-02", fields: 14, completed: true
+    },
+    documents: [
+      { file: "documents/HUB-2041/enrollment.pdf", label: "Prescriber enrollment / start form", cite: "ENR", kind: "Clinical", size: "212 KB" },
+      { file: "documents/HUB-2041/smn.pdf", label: "Statement of medical necessity", cite: "SMN", kind: "Clinical", size: "184 KB" },
+      { file: "documents/HUB-2041/chart_note.pdf", label: "Specialist progress note", cite: "CN", kind: "Clinical", size: "266 KB" },
+      { file: "documents/HUB-2041/lab_report.pdf", label: "Laboratory report", cite: "LAB", kind: "Clinical", size: "141 KB" },
+      { file: "documents/HUB-2041/policy.pdf", label: "Payer medical policy", cite: "POL", kind: "Payer", size: "398 KB" },
+      { file: "documents/HUB-2041/form_blank.pdf", label: "Payer PA form, blank", cite: "FORM-B", kind: "Payer", size: "132 KB" },
+      { file: "documents/HUB-2041/form_completed.pdf", label: "Payer PA form, completed", cite: "FORM-C", kind: "Payer", size: "156 KB" },
+      { file: "documents/HUB-2041/packet.pdf", label: "Assembled submission packet", cite: "PKT", kind: "Packet", size: "1.1 MB" }
+    ],
+    criteria: [
+      { id: "C1", text: "Diagnosis of moderate-to-severe plaque psoriasis, BSA \u2265 10% or involvement of face/hands/feet/genitals", met: true },
+      { id: "C2", text: "Trial and failure, intolerance, or contraindication to at least one conventional systemic therapy (e.g. methotrexate)", met: true },
+      { id: "C3", text: "Prescribed by or in consultation with a dermatologist", met: true },
+      { id: "C4", text: "No active untreated infection (incl. latent TB screening within 12 months)", met: true },
+      { id: "C5", text: "Baseline labs (CBC, LFTs) within normal limits or clinically insignificant", met: true }
+    ],
+    questions: [
+      { q: "What is the patient's diagnosis and ICD-10 code?", a: "Psoriasis vulgaris, L40.0, moderate-to-severe with 18% BSA involvement.", src: "CN", page: 1, conf: "high", why: "Diagnosis and BSA stated in the specialist progress note." },
+      { q: "Has the patient tried and failed a conventional systemic therapy?", a: "Yes — methotrexate 15mg weekly x 4 months, discontinued for inadequate response and transaminitis.", src: "SMN", page: 2, conf: "high", why: "Prior therapy and failure reason documented in the SMN." },
+      { q: "Is the prescriber a dermatologist or in consultation with one?", a: "Yes — Dr. Renata Kwan, MD, board-certified dermatologist.", src: "ENR", page: 1, conf: "high", why: "Prescriber specialty confirmed on the enrollment form." },
+      { q: "Has latent TB been ruled out within the last 12 months?", a: "QuantiFERON-TB Gold negative, collected 2026-08-11.", src: "LAB", page: 1, conf: "high", why: "TB screening result present in the lab report." },
+      { q: "Are baseline CBC and LFTs within acceptable limits?", a: "CBC and comprehensive metabolic panel within normal limits.", src: "LAB", page: 1, conf: "high", why: "Panel results listed in the lab report." },
+      { q: "What is the requested dose, frequency, and route?", a: "Velunexa 150mg subcutaneous, loading at weeks 0 and 4, then every 12 weeks.", src: "SMN", page: 3, conf: "high", why: "Dosing regimen specified in the SMN." },
+      { q: "Is there any active infection that would contraindicate therapy?", a: "No active infection noted on exam.", src: "CN", page: 2, conf: "high", why: "Exam findings documented in the progress note." },
+      { q: "What is the site of care for administration?", a: "Home self-administration by the patient after training.", src: "ENR", page: 2, conf: "high", why: "Site of care selected on the enrollment form." },
+      { q: "Duration of therapy requested?", a: "12 months, initial authorization.", src: "SMN", page: 3, conf: "high", why: "Requested duration stated in the SMN." }
+    ],
+    packet: [
+      { label: "Prescriber enrollment / start form", criteria: "Administrative", why: "Confirms prescriber, site of care, and patient consent." },
+      { label: "Statement of medical necessity", criteria: "C1, C2, C6", why: "Establishes diagnosis, severity, and prior therapy failure." },
+      { label: "Specialist progress note", criteria: "C1, C3", why: "Confirms exam findings and dermatologist involvement." },
+      { label: "Laboratory report", criteria: "C4, C5", why: "TB screening and baseline labs." },
+      { label: "Payer medical policy", criteria: "Reference", why: "Criteria set the agent applied." },
+      { label: "Completed payer PA form", criteria: "All", why: "Structured submission of all cited answers." }
+    ],
+    stages: [
+      ["Ingest referral", 2, 410, "local", "Referral parsed, 1 patient matched"],
+      ["Extract clinical data", 3, 890, "local", "Chart note & labs parsed"],
+      ["Match payer & policy", 1, 120, "cache", "Anvara MP-DERM-014 matched"],
+      ["Answer PA questionnaire", 4, 1240, "local", "9 of 9 questions answered"],
+      ["Complete payer form", 2, 560, "local", "14 of 14 fields completed"],
+      ["Assemble document packet", 1, 90, "local", "6 documents packaged"],
+      ["Apply medical policy criteria", 2, 610, "local", "5 of 5 criteria met"],
+      ["Generate assessment", 1, 340, "local", "Recommendation: Approve & submit"]
+    ],
+    assessment: {
+      verdict: "approve",
+      title: "All medical necessity criteria met",
+      body: "Diagnosis, severity, prior conventional therapy failure, dermatologist involvement, and safety screening are all documented and cited. No gaps identified against Anvara medical policy MP-DERM-014."
+    },
+    submission: {
+      headline: "Prior authorization submitted to Anvara Health Plan",
+      tracking: "ANV-2026-0091423", status: "Submitted — pending payer review",
+      reviewer: "Auto-submitted (no manual review required)", channel: "Payer Portal API"
+    },
+    labs: [
+      ["CBC", "WNL", "Within reference range", "2026-08-11"],
+      ["Comprehensive metabolic panel", "WNL", "Within reference range", "2026-08-11"],
+      ["QuantiFERON-TB Gold", "Negative", "Negative", "2026-08-11"],
+      ["Hepatic function panel", "WNL", "Within reference range", "2026-08-11"]
+    ]
+  },
+
+  /* ============================================================
+     HUB-2042 — STP — File notification (no PA required)
+     ============================================================ */
+  "HUB-2042": {
+    id: "HUB-2042",
+    scenario: "STP",
+    received: "2026-09-04T10:47:00Z",
+    runtime: "7s",
+    baseline: "21 min manual",
+    flags: 0,
+    primaryAction: "File notification",
+
+    patient: {
+      name: "Priya Raman", age: 41, dob: "1985-02-19", sex: "F",
+      pid: "HUB-P-2042", phone: "(206) 555-0117",
+      address: "1129 Cedar Ridge Ct, Seattle, WA 98101"
+    },
+    payer: {
+      name: "Cascadia Mutual", short: "Cascadia", plan: "Cascadia HMO Plus",
+      memberId: "CAS-2291045", group: "GRP-11832",
+      effective: "2026-01-01", benefit: "Medical — Infusion Services"
+    },
+    therapy: {
+      brand: "Ferexa", generic: "ferric carbolate",
+      label: "IV iron, iron deficiency anaemia", cls: "IV Iron Replacement",
+      jcode: "J1750", ndc: "60219-0433-05", dose: "510 mg", route: "Intravenous infusion",
+      frequency: "Two doses, 7 days apart", quantity: "2 vials",
+      daysSupply: "N/A", siteOfCare: "Outpatient infusion suite",
+      duration: "Single course", requestType: "Initial",
+      startDate: "2026-09-08", strength: "510 mg/17mL"
+    },
+    dx: {
+      code: "D50.9", text: "Iron deficiency anaemia, unspecified",
+      full: "Iron deficiency anaemia secondary to menorrhagia, hemoglobin 9.1 g/dL",
+      severity: "Moderate"
+    },
+    prescriber: {
+      name: "Dr. Anand Mehta, MD", npi: "1659210873", specialty: "Hematology",
+      practice: "Puget Sound Hematology Group", phone: "(206) 555-0161",
+      fax: "(206) 555-0162", tin: "91-2205674"
+    },
+    policy: {
+      id: "MP-HEM-007", title: "Cascadia Medical Policy — IV Iron Replacement Therapy",
+      effective: "2026-02-01", rev: "Rev. 3"
+    },
+    form: {
+      name: "N/A — no PA required under policy MP-HEM-007",
+      id: null, rev: null, fields: 0, completed: false
+    },
+    documents: [
+      { file: "documents/HUB-2042/enrollment.pdf", label: "Prescriber enrollment / start form", cite: "ENR", kind: "Clinical", size: "198 KB" },
+      { file: "documents/HUB-2042/smn.pdf", label: "Statement of medical necessity", cite: "SMN", kind: "Clinical", size: "176 KB" },
+      { file: "documents/HUB-2042/chart_note.pdf", label: "Specialist progress note", cite: "CN", kind: "Clinical", size: "241 KB" },
+      { file: "documents/HUB-2042/lab_report.pdf", label: "Laboratory report", cite: "LAB", kind: "Clinical", size: "133 KB" },
+      { file: "documents/HUB-2042/policy.pdf", label: "Payer medical policy", cite: "POL", kind: "Payer", size: "302 KB" },
+      { file: "documents/HUB-2042/packet.pdf", label: "Assembled notification packet", cite: "PKT", kind: "Packet", size: "740 KB" }
+    ],
+    criteria: [
+      { id: "C1", text: "Diagnosis of iron deficiency anaemia with hemoglobin < 10 g/dL or symptomatic", met: true },
+      { id: "C2", text: "Oral iron intolerance, malabsorption, or inadequate response documented", met: true },
+      { id: "C3", text: "Site of care is outpatient infusion or office setting (no PA required)", met: true }
+    ],
+    questions: [
+      { q: "What is the patient's diagnosis and hemoglobin level?", a: "Iron deficiency anaemia, D50.9, hemoglobin 9.1 g/dL.", src: "LAB", page: 1, conf: "high", why: "Hemoglobin value present in the laboratory report." },
+      { q: "Has oral iron been tried or is it contraindicated?", a: "Oral ferrous sulfate trialed 8 weeks, discontinued for GI intolerance.", src: "SMN", page: 1, conf: "high", why: "Oral iron trial documented in the SMN." },
+      { q: "Is the site of care outpatient infusion or office-based?", a: "Yes — outpatient infusion suite, Puget Sound Hematology Group.", src: "ENR", page: 1, conf: "high", why: "Site of care listed on the enrollment form." }
+    ],
+    packet: [
+      { label: "Prescriber enrollment / start form", criteria: "Administrative", why: "Confirms prescriber and outpatient site of care." },
+      { label: "Statement of medical necessity", criteria: "C1, C2", why: "Documents diagnosis and oral iron intolerance." },
+      { label: "Laboratory report", criteria: "C1", why: "Confirms hemoglobin below threshold." },
+      { label: "Payer medical policy", criteria: "Reference", why: "Confirms no PA is required for this site of care." }
+    ],
+    stages: [
+      ["Ingest referral", 1, 320, "local", "Referral parsed, 1 patient matched"],
+      ["Extract clinical data", 2, 610, "local", "Chart note & labs parsed"],
+      ["Match payer & policy", 1, 110, "cache", "Cascadia MP-HEM-007 matched — no PA required"],
+      ["Answer PA questionnaire", 0, 0, "skipped", "Not applicable — no PA required"],
+      ["Complete payer form", 0, 0, "skipped", "Not applicable — no PA required"],
+      ["Assemble document packet", 1, 80, "local", "4 documents packaged"],
+      ["Apply medical policy criteria", 1, 260, "local", "3 of 3 criteria met"],
+      ["Generate assessment", 1, 210, "local", "Recommendation: File notification"]
+    ],
+    assessment: {
+      verdict: "file",
+      title: "No prior authorization required",
+      body: "Cascadia medical policy MP-HEM-007 does not require PA for outpatient IV iron infusion when oral iron intolerance is documented. A notification-only filing is recommended in place of a PA submission."
+    },
+    submission: {
+      headline: "Notification filed with Cascadia Mutual",
+      tracking: "CAS-2026-0044210", status: "Filed — no payer decision required",
+      reviewer: "Auto-filed (no manual review required)", channel: "Payer Portal API"
+    },
+    labs: [
+      ["Hemoglobin", "9.1 g/dL", "12.0–15.5 g/dL", "2026-08-28"],
+      ["Ferritin", "6 ng/mL", "15–150 ng/mL", "2026-08-28"],
+      ["TSAT", "8%", "20–50%", "2026-08-28"]
+    ]
+  },
+
+  /* ============================================================
+     HUB-2043 — UPDATE — Request information (1 flag)
+     ============================================================ */
+  "HUB-2043": {
+    id: "HUB-2043",
+    scenario: "UPDATE",
+    received: "2026-09-04T08:03:00Z",
+    runtime: "18s",
+    baseline: "31 min manual",
+    flags: 1,
+    primaryAction: "Request information",
+
+    patient: {
+      name: "Daniel Okafor", age: 63, sex: "M", dob: "1963-06-27",
+      pid: "HUB-P-2043", phone: "(312) 555-0184",
+      address: "740 Winterset Ave, Chicago, IL 60614"
+    },
+    payer: {
+      name: "Anvara Health Plan", short: "Anvara", plan: "Anvara PPO Select",
+      memberId: "ANV-7743210", group: "GRP-40021",
+      effective: "2026-01-01", benefit: "Medical — Specialty Pharmacy"
+    },
+    therapy: {
+      brand: "Zymvora", generic: "alglucerase beta",
+      label: "Enzyme replacement therapy, Gaucher disease type 1", cls: "Enzyme Replacement Therapy",
+      jcode: "J0219", ndc: "58468-0271-01", dose: "60 units/kg", route: "Intravenous infusion",
+      frequency: "Every 2 weeks", quantity: "Per weight-based calc",
+      daysSupply: "N/A", siteOfCare: "Outpatient infusion center",
+      duration: "12 months, continuation", requestType: "Continuation",
+      startDate: "2026-09-20", strength: "400 units/vial"
+    },
+    dx: {
+      code: "E75.22", text: "Gaucher disease type 1",
+      full: "Gaucher disease type 1 with hepatosplenomegaly, on established ERT",
+      severity: "Established, stable"
+    },
+    prescriber: {
+      name: "Dr. Susan Bright, MD", npi: "1902837456", specialty: "Medical Genetics",
+      practice: "Great Lakes Metabolic Disease Center", phone: "(312) 555-0176",
+      fax: "(312) 555-0177", tin: "45-1183302"
+    },
+    policy: {
+      id: "MP-METAB-002", title: "Anvara Medical Policy — Enzyme Replacement Therapy for Gaucher Disease",
+      effective: "2026-01-15", rev: "Rev. 4"
+    },
+    form: {
+      name: "Anvara Specialty Drug Prior Authorization Request",
+      id: "ANV-PA-014", rev: "Rev. 2026-02", fields: 16, completed: true
+    },
+    documents: [
+      { file: "documents/HUB-2043/enrollment.pdf", label: "Prescriber enrollment / start form", cite: "ENR", kind: "Clinical", size: "205 KB" },
+      { file: "documents/HUB-2043/smn.pdf", label: "Statement of medical necessity", cite: "SMN", kind: "Clinical", size: "191 KB" },
+      { file: "documents/HUB-2043/chart_note.pdf", label: "Specialist progress note", cite: "CN", kind: "Clinical", size: "254 KB" },
+      { file: "documents/HUB-2043/lab_report.pdf", label: "Laboratory report", cite: "LAB", kind: "Clinical", size: "146 KB" },
+      { file: "documents/HUB-2043/policy.pdf", label: "Payer medical policy", cite: "POL", kind: "Payer", size: "365 KB" },
+      { file: "documents/HUB-2043/form_blank.pdf", label: "Payer PA form, blank", cite: "FORM-B", kind: "Payer", size: "129 KB" },
+      { file: "documents/HUB-2043/form_completed.pdf", label: "Payer PA form, completed", cite: "FORM-C", kind: "Payer", size: "162 KB" },
+      { file: "documents/HUB-2043/packet.pdf", label: "Assembled submission packet", cite: "PKT", kind: "Packet", size: "1.0 MB" }
+    ],
+    criteria: [
+      { id: "C1", text: "Confirmed diagnosis of Gaucher disease type 1 (enzyme assay or genetic testing)", met: true },
+      { id: "C2", text: "Prescribed by or in consultation with a geneticist or metabolic disease specialist", met: true },
+      { id: "C3", text: "Continuation requires abdominal imaging (MRI or ultrasound) within the prior 6 months documenting organ volumes", met: false, note: "Most recent imaging is 9 months old — exceeds the 6-month policy requirement." },
+      { id: "C4", text: "Baseline labs (CBC, chitotriosidase) within monitoring parameters", met: true }
+    ],
+    questions: [
+      { q: "What is the patient's confirmed diagnosis?", a: "Gaucher disease type 1, confirmed by leukocyte beta-glucosidase assay in 2019.", src: "CN", page: 1, conf: "high", why: "Diagnosis and confirmatory test noted in the progress note." },
+      { q: "Is the prescriber a geneticist or metabolic disease specialist?", a: "Yes — Dr. Susan Bright, MD, Medical Genetics.", src: "ENR", page: 1, conf: "high", why: "Prescriber specialty confirmed on the enrollment form." },
+      { q: "Date and result of most recent abdominal imaging assessing organ volumes?", a: null, src: null, page: null, conf: "low", why: "Most recent imaging on file is dated 2025-12-08 (9 months prior to this request) — policy requires imaging within 6 months. No newer imaging found in the referral packet." },
+      { q: "What is the current chitotriosidase level?", a: "412 nmol/hr/mL, trending down from baseline.", src: "LAB", page: 1, conf: "high", why: "Lab value present in the laboratory report." },
+      { q: "What is the requested dose and frequency?", a: "60 units/kg every 2 weeks, continuation of established regimen.", src: "SMN", page: 2, conf: "high", why: "Dosing regimen specified in the SMN." }
+    ],
+    packet: [
+      { label: "Prescriber enrollment / start form", criteria: "Administrative", why: "Confirms prescriber and site of care." },
+      { label: "Statement of medical necessity", criteria: "C1, C2", why: "Establishes diagnosis and specialist involvement." },
+      { label: "Specialist progress note", criteria: "C1", why: "Confirms diagnostic history." },
+      { label: "Laboratory report", criteria: "C4", why: "Chitotriosidase monitoring." },
+      { label: "Abdominal imaging report", criteria: "C3", why: "Required to confirm organ volumes within 6 months.", missing: true },
+      { label: "Payer medical policy", criteria: "Reference", why: "Criteria set the agent applied." }
+    ],
+    stages: [
+      ["Ingest referral", 2, 400, "local", "Referral parsed, 1 patient matched"],
+      ["Extract clinical data", 3, 870, "local", "Chart note & labs parsed"],
+      ["Match payer & policy", 1, 130, "cache", "Anvara MP-METAB-002 matched"],
+      ["Answer PA questionnaire", 5, 1310, "local", "4 of 5 questions answered — 1 unresolved"],
+      ["Complete payer form", 2, 540, "local", "15 of 16 fields completed"],
+      ["Assemble document packet", 1, 95, "local", "6 of 7 documents packaged — imaging missing"],
+      ["Apply medical policy criteria", 2, 590, "local", "3 of 4 criteria met — imaging recency flagged"],
+      ["Generate assessment", 2, 360, "local", "Recommendation: Request information"]
+    ],
+    assessment: {
+      verdict: "update",
+      title: "1 flag — updated imaging required",
+      body: "All continuation criteria are met except imaging recency: policy MP-METAB-002 requires abdominal imaging within 6 months for continuation, and the most recent study on file is 9 months old. Recommend requesting updated imaging from the prescriber before submission."
+    },
+    submission: {
+      headline: "Information request sent to prescriber",
+      tracking: "ANV-2026-0091487-RFI", status: "Pending — awaiting updated imaging",
+      reviewer: "Escalated to case manager", channel: "Prescriber Portal"
+    },
+    labs: [
+      ["Hemoglobin", "12.8 g/dL", "13.5–17.5 g/dL", "2026-08-19"],
+      ["Platelets", "141 x10\u00b3/\u00b5L", "150–400 x10\u00b3/\u00b5L", "2026-08-19"],
+      ["Chitotriosidase", "412 nmol/hr/mL", "Trending to baseline", "2026-08-19"],
+      ["Abdominal MRI (organ volumes)", "Liver 1.3x normal, spleen 4.1x normal", "N/A", "2025-12-08"]
+    ]
+  },
+
+  /* ============================================================
+     HUB-2044 — REJECT — Return to prescriber (2 flags)
+     ============================================================ */
+  "HUB-2044": {
+    id: "HUB-2044",
+    scenario: "REJECT",
+    received: "2026-09-03T15:41:00Z",
+    runtime: "19s",
+    baseline: "29 min manual",
+    flags: 2,
+    primaryAction: "Return to prescriber",
+
+    patient: {
+      name: "Alice Chen", age: 37, sex: "F", dob: "1989-04-02",
+      pid: "HUB-P-2044", phone: "(415) 555-0129",
+      address: "56 Fairmount Terrace, San Francisco, CA 94110"
+    },
+    payer: {
+      name: "Northgate Benefit Trust", short: "Northgate", plan: "Northgate Choice EPO",
+      memberId: "NGT-3391207", group: "GRP-77104",
+      effective: "2026-01-01", benefit: "Medical — Specialty Pharmacy"
+    },
+    therapy: {
+      brand: "Neuvexa", generic: "obeltamab",
+      label: "Anti-CGRP, chronic migraine prevention", cls: "Biologic — Anti-CGRP",
+      jcode: "J3592", ndc: "63739-0552-01", dose: "225 mg", route: "Subcutaneous injection",
+      frequency: "Monthly", quantity: "1 autoinjector",
+      daysSupply: "28", siteOfCare: "Home self-administration",
+      duration: "6 months, initial authorization", requestType: "Initial",
+      startDate: "2026-09-12", strength: "225 mg/1.5mL"
+    },
+    dx: {
+      code: "G43.709", text: "Chronic migraine without aura, not intractable",
+      full: "Chronic migraine, \u226515 headache days/month for 5 months",
+      severity: "Chronic, moderate frequency"
+    },
+    prescriber: {
+      name: "Dr. Marcus Feld, MD", npi: "1738029156", specialty: "Neurology",
+      practice: "Bayview Neurology Partners", phone: "(415) 555-0143",
+      fax: "(415) 555-0144", tin: "68-2214093"
+    },
+    policy: {
+      id: "MP-NEURO-009", title: "Northgate Medical Policy — Anti-CGRP Therapies for Chronic Migraine",
+      effective: "2026-04-01", rev: "Rev. 5"
+    },
+    form: {
+      name: "Northgate Specialty Drug Prior Authorization Request",
+      id: "NGT-PA-009", rev: "Rev. 2026-03", fields: 13, completed: true
+    },
+    documents: [
+      { file: "documents/HUB-2044/enrollment.pdf", label: "Prescriber enrollment / start form", cite: "ENR", kind: "Clinical", size: "201 KB" },
+      { file: "documents/HUB-2044/smn.pdf", label: "Statement of medical necessity", cite: "SMN", kind: "Clinical", size: "179 KB" },
+      { file: "documents/HUB-2044/chart_note.pdf", label: "Specialist progress note", cite: "CN", kind: "Clinical", size: "238 KB" },
+      { file: "documents/HUB-2044/lab_report.pdf", label: "Laboratory report", cite: "LAB", kind: "Clinical", size: "118 KB" },
+      { file: "documents/HUB-2044/policy.pdf", label: "Payer medical policy", cite: "POL", kind: "Payer", size: "341 KB" },
+      { file: "documents/HUB-2044/form_blank.pdf", label: "Payer PA form, blank", cite: "FORM-B", kind: "Payer", size: "124 KB" },
+      { file: "documents/HUB-2044/form_completed.pdf", label: "Payer PA form, completed", cite: "FORM-C", kind: "Payer", size: "151 KB" },
+      { file: "documents/HUB-2044/packet.pdf", label: "Assembled submission packet", cite: "PKT", kind: "Packet", size: "980 KB" }
+    ],
+    criteria: [
+      { id: "C1", text: "Diagnosis of chronic migraine, \u226515 headache days/month for \u22653 consecutive months", met: true },
+      { id: "C2", text: "Step therapy: documented trial and failure of at least 2 preventive drug classes (e.g. beta-blocker, anticonvulsant)", met: false, note: "Only one preventive class (topiramate) documented as tried; a second class trial is not on file." },
+      { id: "C3", text: "No concurrent use of another anti-CGRP therapy", met: true },
+      { id: "C4", text: "Migraine diary or headache log for \u22654 weeks supporting frequency", met: false, note: "No headache diary or log included in the referral packet." }
+    ],
+    questions: [
+      { q: "What is the patient's diagnosis and headache frequency?", a: "Chronic migraine, G43.709, 16-18 headache days/month for the past 5 months.", src: "CN", page: 1, conf: "high", why: "Frequency documented in the progress note." },
+      { q: "Which preventive therapies have been tried and failed?", a: "Topiramate 100mg/day x 3 months, discontinued for cognitive side effects.", src: "SMN", page: 1, conf: "high", why: "Prior therapy documented in the SMN." },
+      { q: "Has a second preventive drug class (e.g. beta-blocker) been tried?", a: null, src: null, page: null, conf: "low", why: "No record of a second preventive class trial (e.g. propranolol, amitriptyline) found in the enrollment, SMN, or chart note." },
+      { q: "Is a headache diary or log on file supporting the reported frequency?", a: null, src: null, page: null, conf: "low", why: "No headache diary or log was included with the referral documents." },
+      { q: "Is the patient on another anti-CGRP agent concurrently?", a: "No concurrent anti-CGRP therapy.", src: "CN", page: 2, conf: "high", why: "Medication list reviewed in the progress note." }
+    ],
+    packet: [
+      { label: "Prescriber enrollment / start form", criteria: "Administrative", why: "Confirms prescriber and site of care." },
+      { label: "Statement of medical necessity", criteria: "C1, C2", why: "Documents diagnosis and first preventive trial." },
+      { label: "Specialist progress note", criteria: "C1, C3", why: "Confirms frequency and medication list." },
+      { label: "Second preventive class trial record", criteria: "C2", why: "Required by step therapy policy — not found in referral.", missing: true },
+      { label: "Headache diary / log", criteria: "C4", why: "Required to substantiate reported frequency — not found in referral.", missing: true },
+      { label: "Payer medical policy", criteria: "Reference", why: "Criteria set the agent applied." }
+    ],
+    stages: [
+      ["Ingest referral", 2, 390, "local", "Referral parsed, 1 patient matched"],
+      ["Extract clinical data", 3, 840, "local", "Chart note & labs parsed"],
+      ["Match payer & policy", 1, 115, "cache", "Northgate MP-NEURO-009 matched"],
+      ["Answer PA questionnaire", 5, 1290, "local", "3 of 5 questions answered — 2 unresolved"],
+      ["Complete payer form", 2, 520, "local", "13 of 13 fields completed"],
+      ["Assemble document packet", 1, 85, "local", "6 of 8 documents packaged — 2 gaps"],
+      ["Apply medical policy criteria", 2, 580, "local", "2 of 4 criteria met — step therapy not satisfied"],
+      ["Generate assessment", 2, 355, "local", "Recommendation: Return to prescriber"]
+    ],
+    assessment: {
+      verdict: "reject",
+      title: "2 flags — step therapy not met",
+      body: "Northgate policy MP-NEURO-009 requires documented trial and failure of two preventive drug classes plus a supporting headache diary. Only one preventive class trial and no diary are on file. Recommend returning to the prescriber for the missing step-therapy documentation before resubmission."
+    },
+    submission: {
+      headline: "Case returned to prescriber",
+      tracking: "NGT-2026-0027745-RTN", status: "Returned — awaiting additional documentation",
+      reviewer: "Escalated to case manager", channel: "Prescriber Portal"
+    },
+    labs: [
+      ["CBC", "WNL", "Within reference range", "2026-08-22"],
+      ["Comprehensive metabolic panel", "WNL", "Within reference range", "2026-08-22"]
+    ]
+  }
+};
+
+window.CASE_ORDER = ["HUB-2041", "HUB-2042", "HUB-2043", "HUB-2044"];
+
+</script>
+<script>
+/* Fusion Hub Services — routing, views, agent run animation, RPA export */
+(function(){
+"use strict";
+
+const CASES = window.CASES;
+const ORDER = window.CASE_ORDER;
+const app = document.getElementById("app");
+
+/* runtime state per case (in-memory only, resets on page reload) */
+const RUN = {}; // caseId -> { running, stageIdx, done, revealedQ, filledFields, finished, primaryDone }
+function runState(id){
+  if(!RUN[id]) RUN[id] = { running:false, stageIdx:-1, done:false, revealedQ:0, filledFields:0, finished:false, primaryDone:false };
+  return RUN[id];
+}
+function resetCase(id){ RUN[id] = { running:false, stageIdx:-1, done:false, revealedQ:0, filledFields:0, finished:false, primaryDone:false }; }
+
+/* ---------------- utils ---------------- */
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function fmtDate(iso){
+  if(!iso) return "\u2014";
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" });
+}
+function badgeFor(scn){
+  const cls = { HAPPY:"badge-happy", STP:"badge-stp", UPDATE:"badge-update", REJECT:"badge-reject" }[scn] || "badge-stp";
+  return `<span class="badge ${cls}">${esc(scn)}</span>`;
+}
+function statusBadge(st){
+  if(st.primaryDone) return `<span class="badge badge-happy">SUBMITTED</span>`;
+  if(st.finished) return `<span class="badge badge-update">REVIEW</span>`;
+  if(st.running) return `<span class="badge badge-stp">RUNNING</span>`;
+  return `<span class="badge badge-neutral">NEW</span>`;
+}
+function verdictClass(v){ return {approve:"approve", file:"file", update:"update", reject:"reject"}[v] || "file"; }
+
+let toastId = 0;
+function toast(msg, kind){
+  let stack = document.querySelector(".toast-stack");
+  if(!stack){ stack = document.createElement("div"); stack.className="toast-stack"; document.body.appendChild(stack); }
+  const id = "t"+(++toastId);
+  const el = document.createElement("div");
+  el.className = "toast" + (kind ? " "+kind : "");
+  el.id = id;
+  el.textContent = msg;
+  stack.appendChild(el);
+  setTimeout(()=>{ el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(()=>el.remove(), 320); }, 4200);
+}
+
+/* ---------------- router ---------------- */
+window.addEventListener("hashchange", render);
+window.addEventListener("DOMContentLoaded", async ()=>{
+  if(!location.hash) location.hash = "#/portal";
+  await loadCasesFromSupabase();
+  render();
+});
+
+function render(){
+  const hash = location.hash.replace(/^#/, "") || "/portal";
+  const caseMatch = hash.match(/^\/case\/([A-Za-z0-9-]+)/);
+  if(hash.startsWith("/crm")) return renderCRM(hash);
+  if(caseMatch) return renderCaseView(caseMatch[1]);
+  return renderPortal();
+}
+
+function topbar(active){
+  return `
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">FH</div>
+      Fusion Hub Services
+      <span class="sub">Specialty Drug PA Automation</span>
+    </div>
+    <div class="nav-tabs">
+      <a href="#/portal" class="${active==='portal'?'active':''}">Work queue</a>
+      <a href="#/crm" class="${active==='crm'?'active':''}">Case Manager (CRM)</a>
+      <span class="env-tag">Synthetic data</span>
+    </div>
+  </div>`;
+}
+
+/* ================================================================
+   PORTAL — work queue
+   ================================================================ */
+function scenarioBadge(scn){
+  const map = { HAPPY:"badge-happy", STP:"badge-stp", UPDATE:"badge-update", REJECT:"badge-reject" };
+  return `<span class="badge ${map[scn]||'badge-stp'}">${esc(scn)}</span>`;
+}
+
+function statusCell(st, c){
+  if(st.primaryDone) return `<span class="status-btn status-done">${esc(c.primaryAction)}</span>`;
+  if(st.finished)    return `<span class="status-btn status-review">REVIEW</span>`;
+  if(st.running)     return `<span class="status-btn status-running">RUNNING</span>`;
+  return `<span class="status-btn status-new">NEW</span>`;
+}
+
+function docCount(c){ return c.documents.filter(d=>d.kind==="Clinical").length; }
+
+function renderPortal(){
+  const rows = ORDER.map(id=>{
+    const c = CASES[id];
+    const st = runState(id);
+    const isFirst = id === ORDER[0];
+    return `
+    <tr class="queue-row">
+      <td class="td-case">
+        <a class="case-id" href="#/case/${id}">${id}</a>
+        ${scenarioBadge(c.scenario)}
+        <div class="td-sub">${esc(c.payer.name)}</div>
+      </td>
+      <td class="td-patient">
+        <div class="td-main">${esc(c.patient.name)}</div>
+        <div class="td-sub">${esc(c.patient.pid)} \u00b7 ${c.patient.age}${c.patient.sex}</div>
+      </td>
+      <td class="td-therapy">
+        <div class="td-main">${esc(c.therapy.brand)} (${esc(c.therapy.generic)}) ${esc(c.therapy.strength)}</div>
+        <div class="td-sub">${esc(c.therapy.jcode)} \u2013 ${esc(c.dx.code)} ${esc(c.dx.text)}</div>
+      </td>
+      <td class="td-recv">${fmtDate(c.received)}</td>
+      <td class="td-docs"><span class="doc-count">${docCount(c)}</span></td>
+      <td class="td-status">
+        ${statusCell(st, c)}
+        ${isFirst && !st.running && !st.finished ? `<a class="open-arrow" href="#/case/${id}">open \u2192</a>` : (st.running||st.finished ? `<a class="open-arrow" href="#/case/${id}">open \u2192</a>` : '')}
+      </td>
+      <td class="td-actions">
+        <div class="row-actions">
+          <button class="btn btn-sm btn-export" data-export="${id}" title="Send to SpecialtyDrugPatientData queue">Export \u2192 RPA</button>
+          <button class="btn btn-sm btn-danger-outline" data-delete="${id}" title="Delete this case">&times;</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+
+  app.innerHTML = `
+    ${topbar('portal')}
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:20px">
+        <div>
+          <h1 class="page-title">Work queue</h1>
+          <p class="page-sub">${ORDER.length} incoming enrollment referral${ORDER.length===1?'':'s'}</p>
+        </div>
+        <div class="case-actions">
+          <button class="btn btn-primary" id="btn-new-case">+ New referral</button>
+          <button class="btn btn-danger-outline" id="btn-reset-demo">Reset demo</button>
+        </div>
+      </div>
+      <div class="panel" style="overflow:auto">
+        <table class="queue-table">
+          <thead>
+            <tr>
+              <th>CASE</th>
+              <th>PATIENT</th>
+              <th>REQUESTED THERAPY</th>
+              <th>RECEIVED</th>
+              <th>DOCS</th>
+              <th>STATUS</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rows || `<tr><td colspan="7" style="padding:24px;color:var(--muted);font-size:13px">No referrals. Click "+ New referral" to add one.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>
+    ${newCaseModalHtml()}`;
+
+  document.querySelectorAll("[data-export]").forEach(btn=>{
+    btn.addEventListener("click", ()=>exportToQueue(btn.dataset.export, btn));
+  });
+  document.querySelectorAll("[data-delete]").forEach(btn=>{
+    btn.addEventListener("click", ()=>confirmDeleteCase(btn.dataset.delete));
+  });
+  document.getElementById("btn-reset-demo").addEventListener("click", ()=>{
+    ORDER.forEach(resetCase);
+    toast("Demo reset.");
+    render();
+  });
+  wireNewCaseModal();
+}
+
+/* ---------------- delete confirmation ---------------- */
+async function confirmDeleteCase(caseId){
+  const c = CASES[caseId];
+  if(!c) return;
+  if(!confirm(`Delete ${caseId} (${c.patient.name})? This also removes its export log entries. This cannot be undone.`)) return;
+  try{
+    await deleteCase(caseId);
+    toast(`${caseId} deleted.`, "success");
+    render();
+  }catch(err){
+    toast("Delete failed: " + err.message, "error");
+  }
+}
+
+/* ---------------- new-case modal ---------------- */
+function newCaseModalHtml(){
+  return `
+  <div class="modal-backdrop" id="new-case-backdrop" style="display:none">
+    <div class="modal">
+      <div class="panel-head"><h2>New referral</h2><button class="btn btn-sm btn-ghost" id="new-case-close">Close</button></div>
+      <div class="panel-body">
+        <form id="new-case-form">
+          <div class="form-grid">
+            <div class="field"><label>Patient name *</label><input required name="patientName" placeholder="Jordan Reyes"></div>
+            <div class="field"><label>Age</label><input name="age" type="number" min="0" max="120"></div>
+            <div class="field"><label>Sex</label>
+              <select name="sex"><option value="">\u2014</option><option>M</option><option>F</option></select>
+            </div>
+            <div class="field"><label>Scenario</label>
+              <select name="scenario">
+                <option value="HAPPY">HAPPY</option><option value="STP">STP</option>
+                <option value="UPDATE" selected>UPDATE</option><option value="REJECT">REJECT</option>
+              </select>
+            </div>
+            <div class="field"><label>Therapy brand</label><input name="brand" placeholder="Velunexa"></div>
+            <div class="field"><label>Therapy generic</label><input name="generic" placeholder="velunekimab"></div>
+            <div class="field"><label>Diagnosis (ICD-10)</label><input name="dxCode" placeholder="L40.0"></div>
+            <div class="field"><label>Diagnosis text</label><input name="dxText" placeholder="Plaque psoriasis"></div>
+            <div class="field"><label>Payer</label><input name="payerName" placeholder="Anvara Health Plan"></div>
+          </div>
+          <div style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end">
+            <button type="button" class="btn" id="new-case-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add referral</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>`;
+}
+function wireNewCaseModal(){
+  const backdrop = document.getElementById("new-case-backdrop");
+  const open = ()=>{ backdrop.style.display = "flex"; };
+  const close = ()=>{ backdrop.style.display = "none"; };
+  document.getElementById("btn-new-case").addEventListener("click", open);
+  document.getElementById("new-case-close").addEventListener("click", close);
+  document.getElementById("new-case-cancel").addEventListener("click", close);
+  backdrop.addEventListener("click", (e)=>{ if(e.target===backdrop) close(); });
+  document.getElementById("new-case-form").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const fields = Object.fromEntries(fd.entries());
+    if(!fields.patientName || !fields.patientName.trim()){ toast("Patient name is required.", "error"); return; }
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true; submitBtn.textContent = "Adding\u2026";
+    try{
+      const c = await createCase(fields);
+      toast(`${c.id} added to the work queue.`, "success");
+      close();
+      render();
+    }catch(err){
+      toast("Could not add referral: " + err.message, "error");
+    }finally{
+      submitBtn.disabled = false; submitBtn.textContent = "Add referral";
+    }
+  });
+}
+
+/* ================================================================
+   CASE WORKSPACE
+   ================================================================ */
+const NUMBER_WORDS = {1:"One",2:"Two",3:"Three",4:"Four",5:"Five",6:"Six",7:"Seven",8:"Eight",9:"Nine",10:"Ten"};
+
+function pipelineSummary(c){
+  const active = c.stages.filter(s=>s[3] !== "skipped").map(s=>s[0].toLowerCase());
+  const n = active.length;
+  const word = NUMBER_WORDS[n] || n;
+  let list;
+  if(active.length <= 1){
+    list = active.join("");
+  } else {
+    list = active.slice(0,-1).join(", ") + ", and " + active[active.length-1];
+  }
+  return `${word} stage${n===1?'':'s'} will run against this referral: ${list}.`;
+}
+
+function firstName(full){ return String(full||"").split(" ")[0] || full; }
+
+function findDoc(c, cite){ return c.documents.find(d=>d.cite===cite); }
+
+function heroCard(c){
+  const policyDoc = findDoc(c, "POL");
+  const formDoc = findDoc(c, "FORM-B") || findDoc(c, "FORM-C");
+  const policyLink = policyDoc ? `<a href="${esc(policyDoc.file)}" target="_blank" rel="noopener">${esc(c.policy.id)}</a>` : esc(c.policy.id);
+  const formLink = formDoc ? `<a href="${esc(formDoc.file)}" target="_blank" rel="noopener">form ${esc(c.form.id)}</a>` : `form ${esc(c.form.id)}`;
+  const formClause = c.form.completed
+    ? `, and complete all ${c.form.fields} fields of ${formLink} \u2014 citing a source for every clinical answer`
+    : `, and determine whether a payer form is required at all`;
+  const baselineMatch = String(c.baseline||"").match(/[\d.]+\s*\S*/);
+  const baselineText = baselineMatch ? baselineMatch[0] : c.baseline;
+
+  return `
+  <div class="panel"><div class="panel-body hero">
+    <div class="hero-icon">\u26a1</div>
+    <h2>Ready to work this request</h2>
+    <p>The agent will read the ${c.documents.length} attached document${c.documents.length===1?'':'s'}, pull ${esc(firstName(c.patient.name))}'s record from the hub case management system, apply ${esc(c.payer.name)} policy ${policyLink}${formClause}.</p>
+    <button class="btn btn-primary" id="btn-run-agent-hero">Run agent</button>
+    <div class="hero-baseline">Manual baseline for this task: ~${esc(baselineText)} (illustrative)</div>
+  </div></div>`;
+}
+
+function workspacePanel(c, st){
+  return `
+  <div class="panel">
+    <div class="panel-head"><h2>Agent pipeline</h2><span class="small muted">${c.stages.length} stages</span></div>
+    <div class="panel-body"><div class="pipeline" id="pipeline">${renderStages(c, st)}</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Payer PA form</h2><span class="small muted">${esc(c.form.name)}</span></div>
+    <div class="panel-body" id="form-panel">${renderForm(c, st)}</div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Clinical questionnaire</h2><span class="small muted">${c.questions.length} questions</span></div>
+    <div class="panel-body" id="qa-panel">${renderQuestions(c, st)}</div>
+  </div>
+  <div id="assessment-slot">${st.finished ? renderAssessment(c) : ""}</div>
+  <div id="submission-slot">${st.primaryDone ? renderReceipt(c) : ""}</div>`;
+}
+
+function renderCaseView(id){
+  const c = CASES[id];
+  if(!c){ app.innerHTML = topbar('portal') + `<div class="container"><p>Unknown case ${esc(id)}.</p></div>`; return; }
+  const st = runState(id);
+  const started = st.running || st.stageIdx >= 0 || st.finished;
+
+  app.innerHTML = `
+    ${topbar('portal')}
+    <div class="container">
+      <a class="breadcrumb" href="#/portal">\u2190 Work queue</a>
+      <div class="case-header">
+        <div>
+          <h1>${id} ${badgeFor(c.scenario)} ${statusBadge(st)}</h1>
+          <div class="case-meta">${esc(c.patient.name)} \u00b7 ${c.patient.age}${c.patient.sex} \u00b7 ${esc(c.patient.pid)} \u2014 <b>${esc(c.therapy.brand)} (${esc(c.therapy.generic)}) ${esc(c.therapy.strength)}</b> (${esc(c.therapy.jcode)}) \u00b7 ${esc(c.payer.name)}</div>
+          <div class="case-subactions">
+            <button class="btn-link" data-export="${id}">Export to RPA queue</button>
+            <button class="btn-link" id="btn-reset-case">Reset case</button>
+            <button class="btn-link danger" data-delete="${id}">Delete case</button>
+          </div>
+        </div>
+        <div class="case-actions">
+          <button class="btn btn-primary" id="btn-run-agent" ${st.running||st.finished?'disabled':''}>${st.finished?'Agent complete':(st.running?'Running\u2026':'Run agent')}</button>
+        </div>
+      </div>
+
+      <div class="case-grid">
+        <div>
+          <div class="panel">
+            <div class="panel-head"><h2>Agent pipeline</h2></div>
+            <div class="panel-body">
+              <div class="eyebrow">Workflow stages</div>
+              <p class="muted small" style="margin:0">${pipelineSummary(c)}</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Source documents</h2></div>
+            <div class="panel-body">
+              <div class="eyebrow">Attached to this case</div>
+              ${renderDocuments(c)}
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Payer form</h2></div>
+            <div class="panel-body">
+              <div class="eyebrow">Form to be completed</div>
+              ${c.form.completed ? `
+                <div class="doc-row">
+                  <div class="doc-icon">FORM</div>
+                  <div class="doc-info">
+                    <div class="doc-label">${esc(c.form.name)}</div>
+                    <div class="doc-sub">${c.form.fields} fields \u00b7 ${esc(c.form.rev)}</div>
+                  </div>
+                </div>` : `<p class="muted small" style="margin:0">${esc(c.form.name)}</p>`}
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Patient & request</h2></div>
+            <div class="panel-body">
+              <dl class="kv">
+                <dt>Patient</dt><dd>${esc(c.patient.name)}, ${c.patient.age}${c.patient.sex}</dd>
+                <dt>DOB</dt><dd>${esc(c.patient.dob)}</dd>
+                <dt>Diagnosis</dt><dd>${esc(c.dx.text)} (${esc(c.dx.code)})</dd>
+                <dt>Therapy</dt><dd>${esc(c.therapy.brand)} \u2014 ${esc(c.therapy.dose)}, ${esc(c.therapy.frequency)}</dd>
+                <dt>Prescriber</dt><dd>${esc(c.prescriber.name)}, ${esc(c.prescriber.specialty)}</dd>
+                <dt>Payer</dt><dd>${esc(c.payer.name)} (${esc(c.payer.plan)})</dd>
+                <dt>Member ID</dt><dd>${esc(c.payer.memberId)}</dd>
+                <dt>Policy</dt><dd>${esc(c.policy.id)} \u2014 ${esc(c.policy.rev)}</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Medical necessity criteria</h2></div>
+            <div class="panel-body">
+              ${c.criteria.map(cr=>`
+                <div class="doc-row">
+                  <div class="doc-icon">${cr.met?'\u2713':'\u2715'}</div>
+                  <div class="doc-info">
+                    <div class="doc-label" style="${cr.met?'':'color:var(--red)'}">${esc(cr.text)}</div>
+                    ${cr.note?`<div class="doc-sub">${esc(cr.note)}</div>`:''}
+                  </div>
+                </div>`).join("")}
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Document packet</h2></div>
+            <div class="panel-body">
+              ${c.packet.map(p=>`
+                <div class="doc-row">
+                  <div class="doc-icon">${p.missing?'!':'\u2713'}</div>
+                  <div class="doc-info">
+                    <div class="doc-label">${esc(p.label)} ${p.missing?'<span class="pill pill-flag">Missing</span>':''}</div>
+                    <div class="doc-sub">Criteria: ${esc(p.criteria)} \u2014 ${esc(p.why)}</div>
+                  </div>
+                </div>`).join("")}
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Labs</h2></div>
+            <div class="panel-body">
+              <table><thead><tr><th class="small muted">Test</th><th class="small muted">Result</th><th class="small muted">Range</th><th class="small muted">Collected</th></tr></thead>
+              <tbody>
+              ${c.labs.map(l=>`<tr><td class="small">${esc(l[0])}</td><td class="small">${esc(l[1])}</td><td class="small muted">${esc(l[2])}</td><td class="small muted">${esc(l[3])}</td></tr>`).join("")}
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <div id="workspace-col">${started ? workspacePanel(c, st) : heroCard(c)}</div>
+      </div>
+    </div>`;
+
+  document.querySelectorAll("[data-export]").forEach(btn=>btn.addEventListener("click", ()=>exportToQueue(btn.dataset.export, btn)));
+  document.querySelectorAll("[data-delete]").forEach(btn=>btn.addEventListener("click", async ()=>{
+    if(!confirm(`Delete ${id} (${c.patient.name})? This also removes its export log entries. This cannot be undone.`)) return;
+    try{ await deleteCase(id); toast(`${id} deleted.`, "success"); location.hash = "#/portal"; }
+    catch(err){ toast("Delete failed: " + err.message, "error"); }
+  }));
+  const runBtn = document.getElementById("btn-run-agent");
+  if(runBtn) runBtn.addEventListener("click", ()=>runAgent(id));
+  const heroRunBtn = document.getElementById("btn-run-agent-hero");
+  if(heroRunBtn) heroRunBtn.addEventListener("click", ()=>runAgent(id));
+  document.getElementById("btn-reset-case").addEventListener("click", ()=>{ resetCase(id); render(); });
+}
+
+function renderStages(c, st){
+  return c.stages.map((s, i)=>{
+    const [name, secs, tokens, mode, result] = s;
+    const skipped = mode === "skipped";
+    const isDone = skipped ? st.stageIdx >= i : (st.done || st.stageIdx > i || (st.stageIdx===i && st.finished));
+    const isRunning = !skipped && st.running && st.stageIdx === i && !st.finished;
+    const cls = skipped ? "skipped" : (isDone || st.finished ? "done" : (isRunning ? "running" : ""));
+    const icon = skipped ? "\u2013" : (isDone || st.finished ? "\u2713" : (isRunning ? "\u22ef" : (i+1)));
+    return `
+    <div class="stage ${cls}">
+      <div class="stage-icon">${icon}</div>
+      <div>
+        <div class="stage-name">${esc(name)}</div>
+        <div class="stage-result">${(isDone||st.finished||skipped) ? esc(result) : (isRunning?'Working\u2026':'Queued')}</div>
+      </div>
+      <div class="stage-meta">${skipped?'skipped':(mode+' \u00b7 '+secs+'s \u00b7 '+tokens+' tok')}</div>
+    </div>`;
+  }).join("");
+}
+
+function formFieldDefs(c){
+  const t=c.therapy, p=c.patient, pa=c.payer, dr=c.prescriber, dx=c.dx;
+  const all = [
+    ["Patient name", p.name], ["Date of birth", p.dob], ["Member ID", pa.memberId],
+    ["Group number", pa.group], ["Diagnosis (ICD-10)", `${dx.text} (${dx.code})`],
+    ["Prescriber name", dr.name], ["Prescriber NPI", dr.npi], ["Prescriber specialty", dr.specialty],
+    ["Requested drug", `${t.brand} (${t.generic})`], ["Strength / dose", `${t.strength} \u2014 ${t.dose}`],
+    ["Route", t.route], ["Frequency", t.frequency], ["Quantity", t.quantity],
+    ["Days supply", t.daysSupply], ["Site of care", t.siteOfCare], ["Request type", t.requestType]
+  ];
+  return all.slice(0, c.form.fields || 0);
+}
+
+function renderForm(c, st){
+  if(!c.form.completed){
+    return `<p class="muted small">${esc(c.form.name)}</p>`;
+  }
+  const defs = formFieldDefs(c);
+  return `<div class="form-grid">${defs.map((d,i)=>{
+    const filled = st.finished || st.filledFields > i;
+    const typing = !st.finished && st.running && st.filledFields === i;
+    return `<div class="field"><label>${esc(d[0])}</label><div class="val ${typing?'typing':''}">${filled?esc(d[1]):''}</div></div>`;
+  }).join("")}</div>`;
+}
+
+function renderQuestions(c, st){
+  return c.questions.map((q,i)=>{
+    const revealed = st.finished || st.revealedQ > i;
+    if(!revealed){
+      return `<div class="qa"><div class="q">${esc(q.q)}</div><div class="a muted">Pending\u2026</div></div>`;
+    }
+    const missing = q.a === null;
+    return `<div class="qa">
+      <div class="q">${esc(q.q)}</div>
+      <div class="a ${missing?'missing':''}">${missing ? 'Not on file' : esc(q.a)}</div>
+      <div class="meta">
+        ${q.src ? `<span class="cite-tag">${esc(q.src)}${q.page?' p.'+q.page:''}</span>` : (missing?'':'<span class="cite-tag">Policy</span>')}
+        ${q.conf==='low' ? '<span class="pill pill-low">Low confidence</span>' : ''}
+        <span>${esc(q.why)}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderDocuments(c){
+  return c.documents.map(d=>{
+    const isPolicy = d.cite === "POL";
+    const title = isPolicy ? c.policy.id : d.label;
+    const sub = isPolicy ? "payer medical policy" : `${d.cite} \u00b7 ${d.kind} \u00b7 ${d.size}`;
+    return `
+    <div class="doc-row">
+      <div class="doc-icon ${isPolicy?'doc-icon-policy':''}">${isPolicy?'POL':'PDF'}</div>
+      <div class="doc-info">
+        <div class="doc-label">${esc(title)}</div>
+        <div class="doc-sub">${esc(sub)}</div>
+      </div>
+      <div class="doc-actions">
+        <a class="btn btn-sm btn-ghost" href="${esc(d.file)}" target="_blank" rel="noopener">View</a>
+        <a class="btn btn-sm btn-ghost" href="${esc(d.file)}" download>Download</a>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderAssessment(c){
+  return `<div class="assessment ${verdictClass(c.assessment.verdict)}">
+    <h3>${esc(c.assessment.title)}</h3>
+    <p>${esc(c.assessment.body)}</p>
+    <div style="margin-top:12px">
+      <button class="btn btn-primary" id="btn-primary-action" data-case="${c.id}">${esc(c.primaryAction)}</button>
+    </div>
+  </div>`;
+}
+
+function renderReceipt(c){
+  return `<div class="panel"><div class="panel-body receipt">
+    <div class="check">\u2713</div>
+    <h2>${esc(c.submission.headline)}</h2>
+    <p class="muted">${esc(c.submission.status)} \u00b7 ${esc(c.submission.channel)}</p>
+    <div class="tracking">${esc(c.submission.tracking)}</div>
+    <div class="stats">
+      <div class="stat"><b>${esc(c.runtime)}</b><span>Agent runtime</span></div>
+      <div class="stat"><b>${esc(c.baseline)}</b><span>Manual baseline</span></div>
+      <div class="stat"><b>${esc(c.submission.reviewer)}</b><span>Reviewer</span></div>
+    </div>
+  </div></div>`;
+}
+
+/* ---------------- agent run controller ---------------- */
+function runAgent(id){
+  const c = CASES[id];
+  const st = runState(id);
+  if(st.running || st.finished) return;
+  st.running = true; st.stageIdx = 0; st.done = false;
+  render();
+  stepStage(id, 0);
+}
+
+function stepStage(id, idx){
+  const c = CASES[id];
+  const st = runState(id);
+  if(idx >= c.stages.length){
+    st.running = false; st.finished = true; st.done = true;
+    render();
+    setTimeout(()=>{
+      const b = document.getElementById("btn-primary-action");
+      if(b) b.addEventListener("click", ()=>{ st.primaryDone = true; render(); toast("Case advanced: "+c.primaryAction); });
+    }, 0);
+    return;
+  }
+  st.stageIdx = idx;
+  const [name, secs, tokens, mode] = c.stages[idx];
+
+  /* progressively reveal questions during the questionnaire stage,
+     and progressively fill fields during the form stage */
+  if(name === "Answer PA questionnaire" && mode !== "skipped"){
+    animateList(id, "revealedQ", c.questions.length, Math.max(secs*1000, 400));
+  }
+  if(name === "Complete payer form" && mode !== "skipped" && c.form.completed){
+    animateList(id, "filledFields", formFieldDefs(c).length, Math.max(secs*1000, 400));
+  }
+
+  render();
+  const dwell = mode === "skipped" ? 250 : Math.max(secs*1000, 500);
+  setTimeout(()=>stepStage(id, idx+1), dwell);
+}
+
+function animateList(id, key, count, totalMs){
+  const st = runState(id);
+  st[key] = 0;
+  if(count<=0) return;
+  const step = Math.max(totalMs / count, 120);
+  let i=0;
+  const tick = ()=>{
+    i++; st[key] = i;
+    const rerenderTarget = key==="revealedQ" ? "qa-panel" : "form-panel";
+    const el = document.getElementById(rerenderTarget);
+    const c = CASES[id];
+    if(el) el.innerHTML = key==="revealedQ" ? renderQuestions(c, st) : renderForm(c, st);
+    const pipe = document.getElementById("pipeline");
+    if(pipe) pipe.innerHTML = renderStages(c, st);
+    if(i<count) setTimeout(tick, step);
+  };
+  setTimeout(tick, step);
+}
+
+/* ================================================================
+   CRM — Northstar Hub Case Manager
+   ================================================================ */
+function renderCRM(hash){
+  const m = hash.match(/^\/crm\/([A-Za-z0-9-]+)(?:\/(\w+))?/);
+  const activeId = m ? m[1] : ORDER[0];
+  const activeTab = (m && m[2]) || "overview";
+  const c = CASES[activeId];
+
+  const side = ORDER.map(id=>{
+    const cc = CASES[id];
+    return `<a class="${id===activeId?'active':''}" href="#/crm/${id}/${activeTab}">${id}<div class="small muted">${esc(cc.patient.name)}</div></a>`;
+  }).join("");
+
+  const tabs = ["overview","documents","labs","notes"];
+  const tabBar = tabs.map(t=>`<button data-tab="${t}" class="${t===activeTab?'active':''}">${t[0].toUpperCase()+t.slice(1)}</button>`).join("");
+
+  let body = "";
+  if(activeTab === "documents"){
+    body = renderDocuments(c);
+  } else if(activeTab === "labs"){
+    body = `<table><thead><tr><th class="small muted">Test</th><th class="small muted">Result</th><th class="small muted">Range</th><th class="small muted">Collected</th></tr></thead>
+      <tbody>${c.labs.map(l=>`<tr><td class="small">${esc(l[0])}</td><td class="small">${esc(l[1])}</td><td class="small muted">${esc(l[2])}</td><td class="small muted">${esc(l[3])}</td></tr>`).join("")}</tbody></table>`;
+  } else if(activeTab === "notes"){
+    body = `<div class="assessment ${verdictClass(c.assessment.verdict)}"><h3>${esc(c.assessment.title)}</h3><p>${esc(c.assessment.body)}</p></div>`;
+  } else {
+    body = `<dl class="kv">
+      <dt>Patient</dt><dd>${esc(c.patient.name)}, ${c.patient.age}${c.patient.sex} \u00b7 ${esc(c.patient.phone)}</dd>
+      <dt>Address</dt><dd>${esc(c.patient.address)}</dd>
+      <dt>Diagnosis</dt><dd>${esc(c.dx.full)}</dd>
+      <dt>Therapy</dt><dd>${esc(c.therapy.brand)} (${esc(c.therapy.generic)}) \u2014 ${esc(c.therapy.label)}</dd>
+      <dt>Prescriber</dt><dd>${esc(c.prescriber.name)}, ${esc(c.prescriber.practice)}</dd>
+      <dt>Payer</dt><dd>${esc(c.payer.name)} \u00b7 ${esc(c.payer.memberId)}</dd>
+      <dt>Scenario</dt><dd>${badgeFor(c.scenario)}</dd>
+    </dl>`;
+  }
+
+  app.innerHTML = `
+    ${topbar('crm')}
+    <div class="container">
+      <h1 class="page-title">Northstar Hub Case Manager</h1>
+      <p class="page-sub">Clinical source system \u2014 read-only view of referral data.</p>
+      <div class="crm-layout">
+        <div class="crm-side">${side}</div>
+        <div class="panel">
+          <div class="panel-body">
+            <div class="crm-tabs">${tabBar}</div>
+            ${body}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.querySelectorAll(".crm-tabs button").forEach(b=>{
+    b.addEventListener("click", ()=>{ location.hash = `#/crm/${activeId}/${b.dataset.tab}`; });
+  });
+}
+
+/* ================================================================
+   EXPORT TO RPA QUEUE (Supabase Edge Function -> UiPath Orchestrator)
+   ================================================================ */
+let _supaClient = null;
+function getSupabase(){
+  const cfg = window.SUPABASE_CONFIG || {};
+  if(!cfg.url || !cfg.anonKey) return null;
+  if(!window.supabase || !window.supabase.createClient) return null;
+  if(!_supaClient) _supaClient = window.supabase.createClient(cfg.url, cfg.anonKey);
+  return _supaClient;
+}
+
+/* ---------------- db row <-> in-page case shape ---------------- */
+/* hub_case columns are snake_case (case_id, primary_action); every view
+   in this file reads the camelCase shape documented in the README
+   (id, primaryAction, ...), so rows coming back from Supabase are
+   translated once, here, on the way in. */
+function rowToCase(row){
+  return {
+    id: row.case_id, scenario: row.scenario, received: row.received,
+    runtime: row.runtime, baseline: row.baseline, flags: row.flags,
+    primaryAction: row.primary_action,
+    patient: row.patient, payer: row.payer, therapy: row.therapy, dx: row.dx,
+    prescriber: row.prescriber, policy: row.policy, form: row.form,
+    documents: row.documents || [], criteria: row.criteria || [],
+    questions: row.questions || [], packet: row.packet || [],
+    stages: row.stages || [], assessment: row.assessment,
+    submission: row.submission, labs: row.labs || []
+  };
+}
+
+/* ---------------- load: replace the bundled data.js cases with the
+   live table, if Supabase is configured ---------------- */
+async function loadCasesFromSupabase(){
+  const client = getSupabase();
+  if(!client) return; // stay on the bundled assets/data.js content
+  try{
+    const { data, error } = await client.functions.invoke("case-crud-hub", { body: { action: "list" } });
+    if(error) throw new Error(error.message || "list failed");
+    if(!data || data.success === false) throw new Error((data && data.error) || "list failed");
+    const rows = data.cases || [];
+    if(!rows.length) return; // empty table -> keep the bundled demo cases visible
+
+    // wipe and repopulate in place so existing references (CASES, ORDER) stay valid
+    ORDER.length = 0;
+    Object.keys(CASES).forEach(k=>delete CASES[k]);
+    rows.forEach(r=>{
+      const c = rowToCase(r);
+      CASES[c.id] = c;
+      ORDER.push(c.id);
+    });
+  }catch(err){
+    console.warn("Could not load cases from Supabase, using bundled data.js instead:", err.message);
+  }
+}
+
+/* ---------------- new-case defaults ---------------- */
+/* Fills in every NOT NULL column on hub_case with a sensible empty
+   value, so a quick 6-field form on the portal is still enough to
+   create a valid row -- the rest can be filled in later, or the case
+   just sits in the queue unrun until someone opens it and clicks
+   Run agent. */
+function blankCaseRow(fields){
+  const now = new Date().toISOString();
+  return {
+    scenario: fields.scenario || "UPDATE",
+    received: now, runtime: "", baseline: "", flags: 0,
+    primaryAction: "Review",
+    patient: { name: fields.patientName, age: Number(fields.age)||null, dob: "", sex: fields.sex||"", pid: "", phone: "", address: "" },
+    payer: { name: fields.payerName, short: fields.payerName, plan: "", memberId: "", group: "", effective: "", benefit: "" },
+    therapy: { brand: fields.brand||"", generic: fields.generic||"", label: "", cls: "", jcode: "", ndc: "", dose: "", route: "", frequency: "", quantity: "", daysSupply: "", siteOfCare: "", duration: "", requestType: "Initial", startDate: "", strength: "" },
+    dx: { code: fields.dxCode||"", text: fields.dxText||"", full: fields.dxText||"", severity: "" },
+    prescriber: { name: "", npi: "", specialty: "", practice: "", phone: "", fax: "", tin: "" },
+    policy: { id: "", title: "", effective: "", rev: "" },
+    form: { name: "Pending", id: null, rev: null, fields: 0, completed: false },
+    documents: [], criteria: [], questions: [], packet: [],
+    stages: [
+      ["Ingest referral", 1, 250, "local", "Referral parsed"],
+      ["Extract clinical data", 2, 500, "local", "Manually entered, not yet reviewed"],
+      ["Match payer & policy", 1, 100, "cache", "Policy not yet matched"],
+      ["Generate assessment", 1, 150, "local", "Awaiting review"]
+    ],
+    assessment: { verdict: "update", title: "Awaiting review", body: "This referral was added manually and has not been run through the agent yet." },
+    submission: { headline: "Not yet submitted", tracking: "", status: "New", reviewer: "", channel: "" },
+    labs: []
+  };
+}
+
+async function createCase(fields){
+  const client = getSupabase();
+  const row = blankCaseRow(fields);
+  if(!client){
+    /* local-only fallback: fabricate an id and add straight to memory */
+    const nextNum = 2040 + ORDER.length + 1;
+    row.id = "HUB-" + nextNum;
+    CASES[row.id] = row;
+    ORDER.push(row.id);
+    return row;
+  }
+  const { data, error } = await client.functions.invoke("case-crud-hub", { body: { action: "create", data: row } });
+  if(error) throw new Error(error.message || "create failed");
+  if(!data || data.success === false) throw new Error((data && data.error) || "create failed");
+  const c = rowToCase(data.case);
+  CASES[c.id] = c;
+  ORDER.push(c.id);
+  return c;
+}
+
+async function deleteCase(caseId){
+  const client = getSupabase();
+  if(!client){
+    delete CASES[caseId];
+    const idx = ORDER.indexOf(caseId);
+    if(idx>-1) ORDER.splice(idx,1);
+    delete RUN[caseId];
+    return;
+  }
+  const { data, error } = await client.functions.invoke("case-crud-hub", { body: { action: "delete", caseId } });
+  if(error) throw new Error(error.message || "delete failed");
+  if(!data || data.success === false) throw new Error((data && data.error) || "delete failed");
+  delete CASES[caseId];
+  const idx = ORDER.indexOf(caseId);
+  if(idx>-1) ORDER.splice(idx,1);
+  delete RUN[caseId];
+}
+
+const RPA_QUEUE_NAME = "SpecialtyDrugPatientData";
+
+async function exportToQueue(caseId, btn){
+  if(!btn) return;
+  const original = btn.textContent;
+  btn.disabled = true; btn.classList.add("is-loading"); btn.textContent = "Sending\u2026";
+
+  const client = getSupabase();
+  try{
+    let result;
+    if(client){
+      const { data, error } = await client.functions.invoke("export-to-uipath", {
+        body: { caseId, queue: RPA_QUEUE_NAME }
+      });
+      if(error) throw new Error(error.message || "Edge function error");
+      if(data && data.success === false) throw new Error(data.error || "Export failed");
+      result = data;
+    } else {
+      /* No Supabase configured — simulate locally so the demo is end-to-end demoable */
+      await new Promise(r=>setTimeout(r, 900));
+      result = { success:true, queueItemId: Math.floor(100000+Math.random()*900000), simulated:true };
+    }
+    btn.classList.remove("is-loading"); btn.classList.add("is-done");
+    btn.textContent = "Sent \u2713";
+    toast(result.simulated
+      ? `[Simulated] Queued to ${RPA_QUEUE_NAME}. Item #${result.queueItemId}`
+      : `Sent to ${RPA_QUEUE_NAME}. Queue item #${result.queueItemId}`, "success");
+    setTimeout(()=>{ btn.disabled=false; btn.classList.remove("is-done"); btn.textContent = original; }, 3000);
+  } catch(err){
+    btn.disabled = false; btn.classList.remove("is-loading"); btn.textContent = original;
+    toast("Export failed: " + err.message, "error");
+  }
+}
+
+})();
+
+</script>
+</body>
+</html>
